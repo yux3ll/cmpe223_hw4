@@ -9,7 +9,7 @@ public class Heap {
     // and a custom compareTo method that creates the dynamic nature of the time based queue.
     //-----------------------------------------------
 
-    private Node[] heap; // the heap tree
+    private final Node[] heap; // the heap tree
     private int size; // the number of elements in the heap tree
 
     public Heap(int capacity) { // constructor
@@ -138,7 +138,7 @@ public class Heap {
             index = largerChildIndex; // assign the largerChildIndex to the index
         }
     }
-    // this method is actually redundant, but it's effect to the performance is negligible so I kept it in as a safety measure, as I can't guarantee that the heap tree is always in a valid state after my time based sorting algorithm
+    // this method is actually redundant, but it's effect to the performance is negligible, so I kept it in as a safety measure, as I can't guarantee that the heap tree is always in a valid state after my time based sorting algorithm
     public Node traverseHeap(int currentTime) { //method that traverses the heap until the next node's timeOfOrder is more than the time given in the parameter, removes the node with the highest priority, uses the removeNode method
         if (heap[0].timeOfOrder > currentTime) {
             return null;
@@ -166,11 +166,11 @@ public class Heap {
 
 
     public static class Node { // Inner static class Node
-        private int ID; // create an integer called ID
-        private int serviceTime; // create an integer called serviceTime that represents the time needed to process the order
-        private int year; // create an integer called year
-        private int timeOfOrder; // create an integer called timeOfOrder that represents the time when the order was placed
-        private int prioritySameMin; // create an integer called prioritySameMin that represents the priority of the order based on customer loyalty
+        private final int ID; // create an integer called ID
+        private final int serviceTime; // create an integer called serviceTime that represents the time needed to process the order
+        private final int year; // create an integer called year
+        private final int timeOfOrder; // create an integer called timeOfOrder that represents the time when the order was placed
+        private final int prioritySameMin; // create an integer called prioritySameMin that represents the priority of the order based on customer loyalty
         private int waitTime; // create an integer called waitTime that represents the time the order has been waiting in the queue
 
         public Node(int ID, int year, int timeOfOrder, int serviceTime) { // constructor for the Node class
@@ -196,13 +196,7 @@ public class Heap {
         public int compareTo(Node other, int currentTime) { // heavily modified compareTo method that compares the priority of the nodes based on the time given in the parameter, priority and time of order
             if ((currentTime - this.timeOfOrder>=0 && currentTime - other.timeOfOrder>=0) ||(currentTime - this.timeOfOrder<0 && currentTime - other.timeOfOrder<0)) { // if either both orders are already placed or both orders are not yet placed
                 if (this.prioritySameMin == other.prioritySameMin) { //then we just compare as we would normally
-                    if (this.timeOfOrder == other.timeOfOrder) {
-                        return 0;
-                    } else if (this.timeOfOrder < other.timeOfOrder) {
-                        return 1;
-                    } else {
-                        return -1;
-                    }
+                    return Integer.compare(other.timeOfOrder, this.timeOfOrder);
                 } else if (this.prioritySameMin < other.prioritySameMin) {
                     return -1;
                 } else {
