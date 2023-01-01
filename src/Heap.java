@@ -5,7 +5,8 @@ public class Heap {
     // ID: 43951623744 & 22829169256
     // Section: 02
     // Assignment: 4
-    // Description: A class that implements the PriorityQueue interface using a max heap tree.
+    // Description: A class that implements the PriorityQueue interface using a max heap Node array, has additional methods for traversing in a specific matter
+    // and a custom compareTo method that creates the dynamic nature of the time based queue.
     //-----------------------------------------------
 
     private Node[] heap; // the heap tree
