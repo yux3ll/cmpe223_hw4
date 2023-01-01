@@ -25,10 +25,12 @@ public class Driver {
         System.out.println("Enter the maximum average waiting time:");
         final int MAX_WAIT_TIME = sc.nextInt(); // read the maximum average waiting time from the console
         int currentTime = 1; // create an integer called currentTime and assign 0 to it
-        int averageWaitTime = 0; // create an integer called averageWaitTime and assign 0 to it
+        double averageWaitTime = 0; // create an integer called averageWaitTime and assign 0 to it
         int driverCount =1;
         int numberOfOrders=input.nextInt();
-
+        String firstLine = "Minimum number of couriers required: ";
+        String secondLine = "Simulation with ";
+        String courierCombo= "";
 
 
         Heap queue = new Heap(numberOfOrders); // create a new HeapTreePriorityQueue object called queue and assign the first integer of the file to it's size
@@ -42,12 +44,13 @@ public class Driver {
 
         while(averageWaitTime == 0 || averageWaitTime>=MAX_WAIT_TIME){
             currentTime=1;
+            courierCombo ="";
             Heap clone = new Heap(queue);
             courier[] amazonPrime = new courier[driverCount++];
             for(int i = 0; i<amazonPrime.length;i++){
-                amazonPrime[i] = new courier();
+                amazonPrime[i] = new courier(i);
             }
-            int totalWaitTime = 0;
+            double totalWaitTime = 0;
             while (!clone.isEmpty()){
                 for (int i = 0; i<amazonPrime.length;i++){
                   if(amazonPrime[i].available){
@@ -55,6 +58,7 @@ public class Driver {
                       Heap.Node temp = clone.traverseHeap(currentTime);
                       if(temp!=null) {
                           amazonPrime[i].sendForDelivery(temp);
+                          courierCombo += "Courier " + amazonPrime[i].ID + " takes customer " + temp.getID() + " at minute " + currentTime + " (wait: " + temp.getWaitTime() + " mins)\n";
                           totalWaitTime+=temp.getWaitTime();
 
                       }
@@ -65,7 +69,10 @@ public class Driver {
             }
             averageWaitTime=totalWaitTime/numberOfOrders;
         }
-        System.out.println(averageWaitTime + " " + --driverCount);
+        System.out.println(firstLine + " " + (driverCount-1)+"\n");
+        System.out.println(secondLine + (driverCount-1) + " Couriers:\n");
+        System.out.println(courierCombo + "\n");
+        System.out.println("Average waiting time: " + averageWaitTime + " minutes");
         // if run out of drivers, time to increment, same for customers
 
 
@@ -77,14 +84,13 @@ public class Driver {
     //
 
 
-     static int recieveOrder(Scanner input, Heap queue, int currentTime){
+     static void recieveOrder(Scanner input, Heap queue, int currentTime){
         int id = input.nextInt(); // read the id from the file
         int year = input.nextInt(); // read the year from the file
         int timeOfOrder = input.nextInt(); // read the time of order from the file
         int serviceTime = input.nextInt(); // read the service time from the file
         queue.add(id, year, timeOfOrder, serviceTime, currentTime); // add the order to the queue
-        return timeOfOrder; // return the time of order
-     }
+        }
 
      static void aMinuteHasPassed(int currentTime, courier[] fedEx, Heap heap){
         for (int i = 0; i<fedEx.length;i++){
@@ -97,9 +103,12 @@ public class Driver {
         boolean available;
         int avaliableAfter;
 
-        public courier(){
+        final int ID;
+
+        public courier(int i){
             available = true;
             avaliableAfter = 0 ;
+            ID = i;
         }
 
 

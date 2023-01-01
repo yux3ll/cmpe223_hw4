@@ -185,6 +185,10 @@ public class Heap {
             return serviceTime;
         }
 
+        public int getID() {
+            return ID;
+        }
+
         public int getWaitTime() { return waitTime; }
 
         public String toString() {
