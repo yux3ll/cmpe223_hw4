@@ -4,7 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="78202fda-a51b-43a6-bd24-2d7dc99e2e34" name="Changes" comment="edited implementation, roadmap for main method">
+    <list default="true" id="78202fda-a51b-43a6-bd24-2d7dc99e2e34" name="Changes" comment="main method half done, heap edited to include arbitrary node removal">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Driver.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Driver.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Heap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Heap.java" afterDir="false" />
@@ -85,7 +85,7 @@
       <workItem from="1671633980667" duration="567000" />
       <workItem from="1672395666501" duration="2823000" />
       <workItem from="1672568117276" duration="12898000" />
-      <workItem from="1672585511313" duration="1089000" />
+      <workItem from="1672585511313" duration="13040000" />
     </task>
     <task id="LOCAL-00001" summary="initial">
       <created>1671624776634</created>
@@ -115,7 +115,14 @@
       <option name="project" value="LOCAL" />
       <updated>1672585481400</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="main method half done, heap edited to include arbitrary node removal">
+      <created>1672586638466</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1672586638466</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -137,6 +144,23 @@
     <MESSAGE value="initial" />
     <MESSAGE value="implementation stuff, not complete" />
     <MESSAGE value="edited implementation, roadmap for main method" />
-    <option name="LAST_COMMIT_MESSAGE" value="edited implementation, roadmap for main method" />
+    <MESSAGE value="main method half done, heap edited to include arbitrary node removal" />
+    <option name="LAST_COMMIT_MESSAGE" value="main method half done, heap edited to include arbitrary node removal" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Driver.java</url>
+          <line>65</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/src/Driver.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="11" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

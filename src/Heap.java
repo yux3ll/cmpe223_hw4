@@ -17,82 +17,60 @@ public class Heap {
     }
 
     public Heap(Heap clone){
-        heap = new Node[clone.heap.length];
-        size = clone.size;
-        for(int i = 0; i < clone.size; i++){
-            heap[i] = clone.heap[i];
+        this.size = clone.size;
+        this.heap = new Node[clone.heap.length];
+        for(int i = 0; i<clone.heap.length;i++){
+            if(clone.heap[i]!=null) {
+                this.heap[i] = new Node(clone.heap[i].ID, clone.heap[i].year, clone.heap[i].timeOfOrder, clone.heap[i].serviceTime);
+            }
         }
     }
-    public void add(int id, int year, int timeOfOrder, int serviceTime) {
+    public void add(int id, int year, int timeOfOrder, int serviceTime, int currentTime) {
         Node node = new Node(id, year, timeOfOrder, serviceTime); // create a new Node object called temp
-        add(node); // call the add method with a Node object
+        add(node, currentTime); // call the add method with a Node object
     }
-    private void add(Node node){
+    private void add(Node node, int currentTime){
         if (size == heap.length) { // if the size of the heap tree is equal to the length of the heap tree
             System.out.println("Heap is full"); // print "Heap is full"
         }
         heap[size] = node; // add the new Node object to the heap tree
         size++; // increase the size by 1
-        bubbleUp(); // call the bubbleUp method
+        bubbleUp(currentTime); // call the bubbleUp method
     }
 
-   public Node remove() {
+   public Node remove(int currentTime) {
         if (size == 0) // if the size of the heap tree is 0
             return null; // return null
         Node temp = heap[0]; // create a new Node object called temp and set it to the first element of the heap tree
         heap[0] = heap[size - 1]; // set the first element of the heap tree to the last element of the heap tree
         heap[size - 1] = null; // set the last element of the heap tree to null
         size--; // decrease the size by 1
-        bubbleDown(); // call the bubbleDown method
+        bubbleDown(currentTime); // call the bubbleDown method
         return temp; // return the temp object
     }
 
-    public Node removeNode(Node node){
-        int index = 0;
-        for(int i = 0; i < size; i++){
-            if(heap[i].equals(node)){
-                index = i;
-                break;
-            }
-        }
-        Node temp = heap[index];
-        heap[index] = heap[size - 1];
-        heap[size - 1] = null;
-        size--;
-        bubbleDown();
-        return temp;
-    }
-
-    public void bubbleUp() {
+    public void bubbleUp(int currentTime) {
         int index = size - 1; // create an integer called index and assign the size of the heap tree minus 1 to it
-        while (hasParent(index) && parent(index).compareTo(heap[index]) < 0) { // while the parent of the index is not null and the parent of the index is less than the index
+        while (hasParent(index) && parent(index).compareTo(heap[index],currentTime) < 0) { // while the parent of the index is not null and the parent of the index is less than the index
             swap(index, parentIndex(index)); // swap the index and the parent index
             index = parentIndex(index); // assign the parent index to the index
         }
     }
 
-    public void bubbleDown(){
+    public void bubbleDown(int currentTime){
         int index = 0; // create an integer called index and assign 0 to it
         while(hasLeftChild(index)){ // while the left child of the index is not null
             int largerChildIndex = leftChildIndex(index); // create an integer called largerChildIndex and assign the left child index of the index to it
-            if(hasRightChild(index) && rightChild(index).compareTo(leftChild(index)) > 0){ // if the right child of the index is not null and the right child of the index is greater than the left child of the index
+            if(hasRightChild(index) && rightChild(index).compareTo(leftChild(index),currentTime) > 0){ // if the right child of the index is not null and the right child of the index is greater than the left child of the index
                 largerChildIndex = rightChildIndex(index); // assign the right child index of the index to the largerChildIndex
             }
-            if(heap[index].compareTo(heap[largerChildIndex]) > 0){ // if the index is greater than the largerChildIndex
+            if(heap[index].compareTo(heap[largerChildIndex],currentTime) > 0){ // if the index is greater than the largerChildIndex
                 break; // break the loop
             }else{ // otherwise
                 swap(index, largerChildIndex); // swap the index and the largerChildIndex
             }
             index = largerChildIndex; // assign the largerChildIndex to the index
         }
-    }
-
-
-    public void resize() {
-        Node[] temp = new Node[heap.length * 2]; // create a new Node array called temp with the length of the heap tree, times 2
-        for (int i = 0; i < heap.length; i++) // for each element in the heap tree
-            temp[i] = heap[i]; // assign the element to the temp array
-        heap = temp; // assign the temp array to the heap tree
     }
 
     public void swap(int index1, int index2) {
@@ -139,30 +117,54 @@ public class Heap {
         return size == 0; // return true if the size of the heap tree is equal to 0, otherwise return false
     }
 
+    public void restoreHeap(int currentTime){
+        for(int i = size/2 - 1; i >= 0; i--){
+            bubbleDown(i, currentTime);
+        }
+    }
 
-
-    public Node traverseHeap(int Currenttime){ //method that traverses the heap until the next node's timeOfOrder is more than the time given in the parameter, removes the node with the highest priority, uses the removeNode method
-        Node temp = null;
-        int i =0;
-        while(heap[i].timeOfOrder <= Currenttime && i < size){
-            if(heap[i].prioritySameMin>temp.prioritySameMin){
-                temp = heap[i];
+    public void bubbleDown(int index, int currentTime){
+        while(hasLeftChild(index)){
+            int largerChildIndex = leftChildIndex(index);
+            if(hasRightChild(index) && rightChild(index).compareTo(leftChild(index),currentTime) > 0){
+                largerChildIndex = rightChildIndex(index);
             }
-            i++;
+            if(heap[index].compareTo(heap[largerChildIndex],currentTime) > 0){
+                break;
+            }else{
+                swap(index, largerChildIndex);
+            }
+            index = largerChildIndex;
         }
-        if (temp != null){
-            return removeNode(temp);
-        }
-        else {
+    }
+
+    public Node traverseHeap(int currentTime) { //method that traverses the heap until the next node's timeOfOrder is more than the time given in the parameter, removes the node with the highest priority, uses the removeNode method
+        if (heap[0].timeOfOrder > currentTime) {
             return null;
+        } else {
+            Node temp = heap[0];
+            int i = 1;
+            while (i < size) {
+                if (heap[i].timeOfOrder <= currentTime && heap[i].prioritySameMin > temp.prioritySameMin) {
+                    temp = heap[i];
+                }
+                i++;
+            }
+            return remove(currentTime);
+        }
+    }
+
+    public void waitTime(int currentTime) {
+        int i=0;
+        while (i < size) {
+            if(heap[i].timeOfOrder <= currentTime) heap[i].waitTime++;
+            i++;
         }
     }
 
 
 
-
-
-    public class Node {
+    public static class Node {
         private int ID;
         private int serviceTime;
         private int year;
@@ -179,63 +181,38 @@ public class Heap {
             this.waitTime = 0;
         }
 
-        public int getYear() {
-            return year;
-        }
-
-        public int getTimeOfOrder() {
-            return timeOfOrder;
-        }
-
         public int getServiceTime() {
             return serviceTime;
         }
 
-        public int getID() {
-            return ID;
-        }
+        public int getWaitTime() { return waitTime; }
 
-        public int getPrioritySameMin() {
-            return prioritySameMin;
-        }
         public String toString() {
             return "ID: " + ID + " Service Time: " + serviceTime + " Year: " + year + " Time of Order: " + timeOfOrder + " Priority: " + prioritySameMin;
         }
-
-        public void incrementWaitTime(int time) {
-            waitTime+=time;
-        }
-
-        public int compareTo(Node other) {
-            if (this.timeOfOrder == other.timeOfOrder) {
+        public int compareTo(Node other, int currentTime) {
+            if ((currentTime - this.timeOfOrder>=0 && currentTime - other.timeOfOrder>=0) ||(currentTime - this.timeOfOrder<0 && currentTime - other.timeOfOrder<0)) {
                 if (this.prioritySameMin == other.prioritySameMin) {
-                    return 0;
-                } else if (this.prioritySameMin > other.prioritySameMin) {
-                    return 1;
-                } else {
+                    if (this.timeOfOrder == other.timeOfOrder) {
+                        return 0;
+                    } else if (this.timeOfOrder < other.timeOfOrder) {
+                        return 1;
+                    } else {
+                        return -1;
+                    }
+                } else if (this.prioritySameMin < other.prioritySameMin) {
                     return -1;
-                }
-            } else if (this.timeOfOrder < other.timeOfOrder) {
-                return 1;
-            } else {
-                return -1;
-            }
-        }
-        public int compareTo(Node other, int switcher) {
-            if (this.timeOfOrder == other.timeOfOrder) {
-                if (this.prioritySameMin == other.prioritySameMin) {
-                    return 0;
-                } else if (this.prioritySameMin > other.prioritySameMin) {
-                    return 1;
                 } else {
-                    return -1;
+                    return 1;
                 }
-            } else if (this.timeOfOrder < other.timeOfOrder) {
+            }else if (currentTime - this.timeOfOrder >=0 && currentTime - other.timeOfOrder<0){
                 return 1;
-            } else {
+            } else if (currentTime - this.timeOfOrder <0 && currentTime - other.timeOfOrder>=0) {
                 return -1;
-            }
-        }
 
+            }
+        return 0;
+        }
     }
 }
+

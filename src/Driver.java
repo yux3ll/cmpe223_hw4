@@ -24,59 +24,76 @@ public class Driver {
 
         System.out.println("Enter the maximum average waiting time:");
         final int MAX_WAIT_TIME = sc.nextInt(); // read the maximum average waiting time from the console
-        int currentTime = 0; // create an integer called currentTime and assign 0 to it
+        int currentTime = 1; // create an integer called currentTime and assign 0 to it
         int averageWaitTime = 0; // create an integer called averageWaitTime and assign 0 to it
         int driverCount =1;
+        int numberOfOrders=input.nextInt();
 
 
-        Heap queue = new Heap(input.nextInt()); // create a new HeapTreePriorityQueue object called queue and assign the first integer of the file to it's size
+
+        Heap queue = new Heap(numberOfOrders); // create a new HeapTreePriorityQueue object called queue and assign the first integer of the file to it's size
 
         while(input.hasNext()) { // fill heap array with the input file
             input.nextLine(); //skip end of line
-            recieveOrder(input, queue); // call the receiveOrder method
+            recieveOrder(input, queue, currentTime); // call the receiveOrder method
         }
         input.close(); // close the input file
         sc.close(); // close the scanner
 
-        while(averageWaitTime>0 & averageWaitTime<MAX_WAIT_TIME){
+        while(averageWaitTime == 0 || averageWaitTime>=MAX_WAIT_TIME){
+            currentTime=1;
             Heap clone = new Heap(queue);
-            courier[] amazonPrime = new courier[driverCount];
-            int availableDrivers = 0;
+            courier[] amazonPrime = new courier[driverCount++];
+            for(int i = 0; i<amazonPrime.length;i++){
+                amazonPrime[i] = new courier();
+            }
+            int totalWaitTime = 0;
             while (!clone.isEmpty()){
                 for (int i = 0; i<amazonPrime.length;i++){
-                  if(amazonPrime[i].available) availableDrivers++;
+                  if(amazonPrime[i].available){
+                      clone.restoreHeap(currentTime);
+                      Heap.Node temp = clone.traverseHeap(currentTime);
+                      if(temp!=null) {
+                          amazonPrime[i].sendForDelivery(temp);
+                          totalWaitTime+=temp.getWaitTime();
+
+                      }
+                  }
                 }
-                if(availableDrivers>0){
-
-
-
-                }
-
+                aMinuteHasPassed(currentTime,amazonPrime,clone);
+                currentTime++;
             }
-
-
+            averageWaitTime=totalWaitTime/numberOfOrders;
         }
+        System.out.println(averageWaitTime + " " + --driverCount);
+        // if run out of drivers, time to increment, same for customers
 
 
      }
-    // check if there are couriers available, increment int i once for every available courier
+    // check if there are couriers available, increment int i once for every available courier //
     // if i>0, traverse heap with time of order vs current time constraint and remove only the highest priority customer if there are any customers at all, if not inc current time, decrement courier times, break loop, do this until i reaches 0, decrement i for every customer removed, print each assigned courier
     // if i=0, increment wait time for all customers in heap with order times less than or equal to current time, decrement from couriers(decrement also switches availability)
     //loop back to beginning until heap is empty
     //
 
 
-     static int recieveOrder(Scanner input, Heap queue){
+     static int recieveOrder(Scanner input, Heap queue, int currentTime){
         int id = input.nextInt(); // read the id from the file
         int year = input.nextInt(); // read the year from the file
         int timeOfOrder = input.nextInt(); // read the time of order from the file
         int serviceTime = input.nextInt(); // read the service time from the file
-        queue.add(id, year, timeOfOrder, serviceTime); // add the order to the queue
+        queue.add(id, year, timeOfOrder, serviceTime, currentTime); // add the order to the queue
         return timeOfOrder; // return the time of order
      }
 
+     static void aMinuteHasPassed(int currentTime, courier[] fedEx, Heap heap){
+        for (int i = 0; i<fedEx.length;i++){
+            fedEx[i].decrementTime();
+        }
+        heap.waitTime(currentTime);
+     }
 
-     class courier{
+     static class courier{
         boolean available;
         int avaliableAfter;
 
@@ -85,6 +102,12 @@ public class Driver {
             avaliableAfter = 0 ;
         }
 
+
+
+        public void sendForDelivery(Heap.Node node){
+            available = false;
+            avaliableAfter = node.getServiceTime();
+        }
         public void decrementTime(){
             if(!available & --avaliableAfter == 0){
                 available = true;
