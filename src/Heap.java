@@ -47,8 +47,21 @@ public class Heap {
         return temp; // return the temp object
     }
 
-
-    public Node removeNode
+    public Node removeNode(Node node){
+        int index = 0;
+        for(int i = 0; i < size; i++){
+            if(heap[i].equals(node)){
+                index = i;
+                break;
+            }
+        }
+        Node temp = heap[index];
+        heap[index] = heap[size - 1];
+        heap[size - 1] = null;
+        size--;
+        bubbleDown();
+        return temp;
+    }
 
     public void bubbleUp() {
         int index = size - 1; // create an integer called index and assign the size of the heap tree minus 1 to it
@@ -127,7 +140,25 @@ public class Heap {
     }
 
 
-    //method that traverses the heap until the next node's timeOfOrder is more than the time given in the parameter, removes the node with the
+
+    public Node traverseHeap(int Currenttime){ //method that traverses the heap until the next node's timeOfOrder is more than the time given in the parameter, removes the node with the highest priority, uses the removeNode method
+        Node temp = null;
+        int i =0;
+        while(heap[i].timeOfOrder <= Currenttime && i < size){
+            if(heap[i].prioritySameMin>temp.prioritySameMin){
+                temp = heap[i];
+            }
+            i++;
+        }
+        if (temp != null){
+            return removeNode(temp);
+        }
+        else {
+            return null;
+        }
+    }
+
+
 
 
 
