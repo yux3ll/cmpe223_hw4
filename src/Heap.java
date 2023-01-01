@@ -22,7 +22,7 @@ public class Heap {
         this.heap = new Node[clone.heap.length];
         for(int i = 0; i<clone.heap.length;i++){
             if(clone.heap[i]!=null) {
-                this.heap[i] = new Node(clone.heap[i].ID, clone.heap[i].year, clone.heap[i].timeOfOrder, clone.heap[i].serviceTime);
+                this.heap[i] = new Node(clone.heap[i].ID, clone.heap[i].REGISTRATION_YEAR, clone.heap[i].TIME_OF_ORDER, clone.heap[i].SERVICE_TIME);
             }
         }
     }
@@ -140,13 +140,13 @@ public class Heap {
     }
     // this method is actually redundant, but it's effect to the performance is negligible, so I kept it in as a safety measure, as I can't guarantee that the heap tree is always in a valid state after my time based sorting algorithm
     public Node traverseHeap(int currentTime) { //method that traverses the heap until the next node's timeOfOrder is more than the time given in the parameter, removes the node with the highest priority, uses the removeNode method
-        if (heap[0].timeOfOrder > currentTime) {
+        if (heap[0].TIME_OF_ORDER > currentTime) {
             return null;
         } else {
             Node temp = heap[0];
             int i = 1;
             while (i < size) {
-                if (heap[i].timeOfOrder <= currentTime && heap[i].prioritySameMin > temp.prioritySameMin) {
+                if (heap[i].TIME_OF_ORDER <= currentTime && heap[i].LOYALTY_PRIORITY > temp.LOYALTY_PRIORITY) {
                     temp = heap[i];
                 }
                 i++;
@@ -158,7 +158,7 @@ public class Heap {
     public void waitTime(int currentTime) { // method that increments the wait time of the nodes in the heap tree, but only those that are actually waiting
         int i=0;
         while (i < size) {
-            if(heap[i].timeOfOrder <= currentTime) heap[i].waitTime++;
+            if(heap[i].TIME_OF_ORDER <= currentTime) heap[i].waitTime++;
             i++;
         }
     }
@@ -167,23 +167,23 @@ public class Heap {
 
     public static class Node { // Inner static class Node
         private final int ID; // create an integer called ID
-        private final int serviceTime; // create an integer called serviceTime that represents the time needed to process the order
-        private final int year; // create an integer called year
-        private final int timeOfOrder; // create an integer called timeOfOrder that represents the time when the order was placed
-        private final int prioritySameMin; // create an integer called prioritySameMin that represents the priority of the order based on customer loyalty
+        private final int SERVICE_TIME; // create an integer called serviceTime that represents the time needed to process the order
+        private final int REGISTRATION_YEAR; // create an integer called year
+        private final int TIME_OF_ORDER; // create an integer called timeOfOrder that represents the time when the order was placed
+        private final int LOYALTY_PRIORITY; // create an integer called prioritySameMin that represents the priority of the order based on customer loyalty
         private int waitTime; // create an integer called waitTime that represents the time the order has been waiting in the queue
 
         public Node(int ID, int year, int timeOfOrder, int serviceTime) { // constructor for the Node class
             this.ID = ID;
-            this.serviceTime = serviceTime;
-            this.year = year;
-            this.timeOfOrder = timeOfOrder;
-            this.prioritySameMin = 2022 - year;
+            this.SERVICE_TIME = serviceTime;
+            this.REGISTRATION_YEAR = year;
+            this.TIME_OF_ORDER = timeOfOrder;
+            this.LOYALTY_PRIORITY = 2022 - year;
             this.waitTime = 0;
         }
 
-        public int getServiceTime() {
-            return serviceTime;
+        public int getSERVICE_TIME() {
+            return SERVICE_TIME;
         }
 
         public int getID() {
@@ -194,17 +194,17 @@ public class Heap {
 
 
         public int compareTo(Node other, int currentTime) { // heavily modified compareTo method that compares the priority of the nodes based on the time given in the parameter, priority and time of order
-            if ((currentTime - this.timeOfOrder>=0 && currentTime - other.timeOfOrder>=0) ||(currentTime - this.timeOfOrder<0 && currentTime - other.timeOfOrder<0)) { // if either both orders are already placed or both orders are not yet placed
-                if (this.prioritySameMin == other.prioritySameMin) { //then we just compare as we would normally
-                    return Integer.compare(other.timeOfOrder, this.timeOfOrder);
-                } else if (this.prioritySameMin < other.prioritySameMin) {
+            if ((currentTime - this.TIME_OF_ORDER >=0 && currentTime - other.TIME_OF_ORDER >=0) ||(currentTime - this.TIME_OF_ORDER <0 && currentTime - other.TIME_OF_ORDER <0)) { // if either both orders are already placed or both orders are not yet placed
+                if (this.LOYALTY_PRIORITY == other.LOYALTY_PRIORITY) { //then we just compare as we would normally
+                    return Integer.compare(other.TIME_OF_ORDER, this.TIME_OF_ORDER);
+                } else if (this.LOYALTY_PRIORITY < other.LOYALTY_PRIORITY) {
                     return -1;
                 } else {
                     return 1;
                 }
-            }else if (currentTime - this.timeOfOrder >=0 && currentTime - other.timeOfOrder<0){ // if the first order is already placed and the second order is not yet placed
+            }else if (currentTime - this.TIME_OF_ORDER >=0 && currentTime - other.TIME_OF_ORDER <0){ // if the first order is already placed and the second order is not yet placed
                 return 1; // then the first order has higher priority
-            } else if (currentTime - this.timeOfOrder <0 && currentTime - other.timeOfOrder>=0) { // if the first order is not yet placed and the second order is already placed
+            } else if (currentTime - this.TIME_OF_ORDER <0 && currentTime - other.TIME_OF_ORDER >=0) { // if the first order is not yet placed and the second order is already placed
                 return -1; // then the second order has higher priority
 
             }

@@ -116,7 +116,7 @@ public class Driver {
 
         public void sendForDelivery(Heap.Node node){ // method to assign a delivery
             available = false;
-            availableAfter = node.getServiceTime();
+            availableAfter = node.getSERVICE_TIME();
         }
         public void decrementTime(){ // method to decrement the time
             if(!available & --availableAfter == 0){ // if the courier is not available and the availableAfter is 0, also decrements the availableAfter by one before checking
